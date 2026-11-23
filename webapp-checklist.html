@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web App Infrastructure Checklist</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:800px;margin:2rem auto;padding:0 1rem;line-height:1.5}
+summary{font-weight:bold;font-size:1.1rem;cursor:pointer;margin-top:1rem}
+ul{list-style:none;padding-left:1rem}
+li{margin:.4rem 0}
+.p{font-size:.75rem;text-transform:uppercase;margin-left:.4rem}
+.critical{color:#b91c1c}.recommended{color:#b45309}.optional{color:#6b7280}
+</style>
+</head>
+<body>
+<h1>Web App Infrastructure Checklist</h1>
+<p>Security, infrastructure, and operational hardening: the stuff that's easy to forget.</p>
+<details open>
+<summary>HTTPS &amp; TLS</summary>
+<ul>
+<li><label><input type="checkbox" id="tls-cert"> TLS certificate installed and auto-renewing (Let&#x27;s Encrypt / managed cert)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="tls-redirect"> HTTP to HTTPS redirect enforced (301 permanent redirect)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="tls-version"> TLS 1.2 minimum enforced, TLS 1.3 preferred, SSL/TLS 1.0/1.1 disabled</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="hsts"> HSTS header enabled with long max-age (Strict-Transport-Security)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="hsts-preload"> HSTS preload list submission (includeSubDomains + preload directive)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="tls-ciphers"> Strong cipher suites only, weak ciphers disabled (no RC4, DES, 3DES)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="cert-transparency"> Certificate Transparency monitoring configured</label> <span class="p optional">[optional]</span></li>
+</ul>
+</details>
+<details open>
+<summary>CSRF Protection</summary>
+<ul>
+<li><label><input type="checkbox" id="csrf-tokens"> CSRF tokens on all state-changing forms and endpoints</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="csrf-samesite"> SameSite cookie attribute set (Lax minimum, Strict where possible)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="csrf-origin"> Origin/Referer header validation on server side</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="csrf-double"> Double-submit cookie pattern as defense-in-depth</label> <span class="p optional">[optional]</span></li>
+<li><label><input type="checkbox" id="csrf-custom-header"> Custom request header requirement for API calls (X-Requested-With)</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>CORS Configuration</summary>
+<ul>
+<li><label><input type="checkbox" id="cors-whitelist"> Explicit origin whitelist, never wildcard (*) with credentials</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="cors-methods"> Allowed methods restricted to only what&#x27;s needed</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="cors-headers"> Allowed headers explicitly listed, not wildcarded</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="cors-preflight"> Preflight (OPTIONS) responses cached with appropriate max-age</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="cors-credentials"> Access-Control-Allow-Credentials only when actually needed</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="cors-expose"> Exposed headers limited to only what frontend needs</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Security Headers</summary>
+<ul>
+<li><label><input type="checkbox" id="csp"> Content-Security-Policy header configured (no unsafe-inline ideally)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="csp-report"> CSP report-uri or report-to directive for violation monitoring</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="x-content-type"> X-Content-Type-Options: nosniff</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="x-frame"> X-Frame-Options: DENY or SAMEORIGIN (clickjacking protection)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="referrer-policy"> Referrer-Policy set (strict-origin-when-cross-origin or stricter)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="permissions-policy"> Permissions-Policy header restricting browser features (camera, mic, geolocation)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="x-xss"> Remove X-XSS-Protection (deprecated, can cause issues in modern browsers)</label> <span class="p optional">[optional]</span></li>
+<li><label><input type="checkbox" id="cache-control"> Cache-Control: no-store on sensitive pages (auth, account, PII)</label> <span class="p critical">[critical]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Cookie Security</summary>
+<ul>
+<li><label><input type="checkbox" id="cookie-secure"> Secure flag on all cookies (HTTPS only transmission)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="cookie-httponly"> HttpOnly flag on session/auth cookies (no JS access)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="cookie-samesite"> SameSite attribute set on all cookies</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="cookie-prefix"> __Host- or __Secure- cookie prefixes for critical cookies</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="cookie-expiry"> Reasonable expiration times, not perpetual sessions</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="cookie-scope"> Cookie path and domain scoped as narrowly as possible</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Authentication &amp; Sessions</summary>
+<ul>
+<li><label><input type="checkbox" id="auth-hash"> Passwords hashed with bcrypt/scrypt/argon2 (never MD5/SHA)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="auth-mfa"> Multi-factor authentication available and encouraged</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="auth-lockout"> Account lockout or progressive delays after failed attempts</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="auth-session-regen"> Session ID regenerated after login (session fixation prevention)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="auth-session-timeout"> Idle session timeout and absolute session expiry</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="auth-logout"> Proper server-side session invalidation on logout</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="auth-password-policy"> Password length minimum (12+), check against breached password lists</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="auth-reset"> Secure password reset flow (time-limited tokens, rate limited)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="auth-enum"> Prevent user enumeration on login/register/reset forms</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Input Validation &amp; Injection</summary>
+<ul>
+<li><label><input type="checkbox" id="input-server"> Server-side validation on ALL inputs (never trust client)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-sql"> Parameterized queries / prepared statements everywhere (SQL injection)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-xss"> Output encoding/escaping for XSS prevention (context-aware)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-sanitize"> HTML sanitization on any user-generated rich content</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-file"> File upload validation (type, size, name sanitization, storage outside webroot)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-cmd"> OS command injection prevention (avoid shell exec, use parameterized alternatives)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-path"> Path traversal protection on any file operations</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="input-deserialization"> Safe deserialization practices (no untrusted object deserialization)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="input-ssrf"> SSRF protection on any server-side URL fetching</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Rate Limiting &amp; Abuse Prevention</summary>
+<ul>
+<li><label><input type="checkbox" id="rate-api"> API rate limiting per user/IP with appropriate windows</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="rate-login"> Login endpoint rate limiting (brute force prevention)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="rate-signup"> Registration rate limiting and bot prevention</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="rate-headers"> Rate limit headers in responses (X-RateLimit-Limit, Remaining, Reset)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="rate-429"> Proper 429 Too Many Requests response with Retry-After header</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="rate-ddos"> DDoS protection layer (Cloudflare, AWS Shield, etc.)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="rate-request-size"> Request body size limits configured</label> <span class="p critical">[critical]</span></li>
+</ul>
+</details>
+<details open>
+<summary>DNS &amp; Domain</summary>
+<ul>
+<li><label><input type="checkbox" id="dns-caa"> CAA records limiting which CAs can issue certs for your domain</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="dns-spf"> SPF record configured for email authentication</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dns-dkim"> DKIM signing configured for outbound email</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dns-dmarc"> DMARC policy set (p=quarantine or p=reject)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dns-dnssec"> DNSSEC enabled if registrar supports it</label> <span class="p optional">[optional]</span></li>
+<li><label><input type="checkbox" id="dns-registrar-lock"> Domain registrar lock enabled, transfer protection on</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dns-ttl"> Appropriate DNS TTL values (not too long, not too short)</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Error Handling &amp; Information Leakage</summary>
+<ul>
+<li><label><input type="checkbox" id="error-generic"> Generic error pages in production (no stack traces, no debug info)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="error-server-header"> Server header removed or genericized (don&#x27;t leak nginx/Apache version)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="error-powered-by"> X-Powered-By header removed (don&#x27;t leak framework info)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="error-404"> Custom 404/500 pages that don&#x27;t reveal directory structure</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="error-api"> API error responses don&#x27;t leak internal details (DB errors, paths, etc.)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="error-source-maps"> Source maps not deployed to production (or access-restricted)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="error-directory"> Directory listing disabled on web server</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="error-debug"> Debug mode OFF in production (Django DEBUG=False, etc.)</label> <span class="p critical">[critical]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Logging &amp; Monitoring</summary>
+<ul>
+<li><label><input type="checkbox" id="log-access"> Access logs with IP, timestamp, request, response code</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="log-auth"> Authentication events logged (login, logout, failed attempts, MFA)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="log-sensitive"> Sensitive data NEVER logged (passwords, tokens, PII, credit cards)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="log-centralized"> Centralized log aggregation (ELK, Datadog, CloudWatch, etc.)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="log-alerts"> Alerting on anomalous patterns (spike in 500s, auth failures, etc.)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="log-retention"> Log retention policy defined and implemented</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="log-uptime"> Uptime monitoring with alerting (health check endpoint)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="log-apm"> Application performance monitoring (response times, throughput)</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Database &amp; Data</summary>
+<ul>
+<li><label><input type="checkbox" id="db-no-public"> Database not publicly accessible (private subnet / firewall)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="db-credentials"> Database credentials in env vars or secrets manager, never in code</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="db-least-priv"> App DB user has minimum required permissions (not root/admin)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="db-encryption-rest"> Encryption at rest enabled for database storage</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="db-encryption-transit"> Encryption in transit (TLS) for database connections</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="db-backups"> Automated backups with tested restore procedures</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="db-backup-encryption"> Backups encrypted and stored in separate location</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="db-migrations"> Database migration strategy and rollback plan</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="db-connection-pool"> Connection pooling configured with sensible limits</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Secrets &amp; Configuration</summary>
+<ul>
+<li><label><input type="checkbox" id="secrets-env"> Secrets in environment variables or secrets manager (never hardcoded)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="secrets-git"> .gitignore covers .env, credentials, keys, and secrets files</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="secrets-scanning"> Git secret scanning enabled (GitHub secret scanning, gitleaks, etc.)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="secrets-rotation"> Secret/key rotation policy and process in place</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="secrets-api-keys"> API keys scoped with minimum permissions needed</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="secrets-separate"> Separate credentials for dev/staging/production environments</label> <span class="p critical">[critical]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Deployment &amp; Infrastructure</summary>
+<ul>
+<li><label><input type="checkbox" id="deploy-ci-cd"> CI/CD pipeline with automated testing before deploy</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="deploy-rollback"> Rollback strategy documented and tested</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="deploy-staging"> Staging environment that mirrors production</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="deploy-iac"> Infrastructure as Code (Terraform, Pulumi, CloudFormation)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="deploy-containers"> Container images scanned for vulnerabilities before deploy</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="deploy-non-root"> Application runs as non-root user</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="deploy-firewall"> Network firewall rules (only required ports open)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="deploy-ssh"> SSH key-only auth, root login disabled, non-standard port</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="deploy-updates"> OS and dependency security patches applied regularly</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="deploy-immutable"> Immutable deployments (don&#x27;t patch live servers)</label> <span class="p optional">[optional]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Dependency Management</summary>
+<ul>
+<li><label><input type="checkbox" id="dep-audit"> Regular dependency vulnerability scanning (npm audit, pip-audit, etc.)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dep-lockfile"> Lockfiles committed (package-lock.json, poetry.lock, etc.)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dep-updates"> Automated dependency update PRs (Dependabot, Renovate)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="dep-supply-chain"> Supply chain security (verify package integrity, use trusted registries)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="dep-minimal"> Minimal dependency footprint, audit unused packages periodically</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="dep-sbom"> Software Bill of Materials (SBOM) generated</label> <span class="p optional">[optional]</span></li>
+</ul>
+</details>
+<details open>
+<summary>API Security</summary>
+<ul>
+<li><label><input type="checkbox" id="api-auth"> All API endpoints require authentication (except explicitly public ones)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="api-authz"> Authorization checks on every endpoint (not just authentication)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="api-idor"> IDOR prevention, verify resource ownership on access</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="api-pagination"> Pagination enforced on list endpoints (prevent data dumps)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="api-versioning"> API versioning strategy implemented</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="api-input-schema"> Request schema validation (reject unexpected fields)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="api-jwt"> JWT tokens: short expiry, proper signature verification, no sensitive data in payload</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="api-graphql"> GraphQL: query depth limiting, complexity analysis, introspection disabled in prod</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Compliance &amp; Privacy Basics</summary>
+<ul>
+<li><label><input type="checkbox" id="privacy-data-inventory"> Data inventory: know what PII you collect and where it&#x27;s stored</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="privacy-consent"> Cookie consent mechanism if required by jurisdiction (GDPR, etc.)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="privacy-encryption-pii"> PII encrypted at rest, not stored in plaintext logs or caches</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="privacy-retention"> Data retention policy, automated purge of old data</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="privacy-deletion"> User data deletion capability (right to be forgotten)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="privacy-subprocessors"> Third-party/subprocessor data sharing documented</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Backup &amp; Disaster Recovery</summary>
+<ul>
+<li><label><input type="checkbox" id="dr-backup-schedule"> Automated backup schedule (DB, file storage, config)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dr-backup-test"> Backup restoration regularly tested (not just assumed working)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="dr-rpo-rto"> RPO and RTO defined and achievable with current setup</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="dr-runbook"> Disaster recovery runbook documented</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="dr-multi-region"> Multi-region or multi-AZ deployment for high availability</label> <span class="p optional">[optional]</span></li>
+<li><label><input type="checkbox" id="dr-dns-failover"> DNS failover or load balancer health checks configured</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+<details open>
+<summary>Performance &amp; Reliability</summary>
+<ul>
+<li><label><input type="checkbox" id="perf-gzip"> Response compression enabled (gzip/brotli)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="perf-cdn"> Static assets served via CDN with proper cache headers</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="perf-cache-headers"> Cache-Control and ETag headers on static resources</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="perf-timeout"> Request timeouts configured (don&#x27;t let hung requests pile up)</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="perf-connection-limits"> Connection limits and queue depths configured</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="perf-health-check"> Health check endpoint that tests downstream dependencies</label> <span class="p critical">[critical]</span></li>
+<li><label><input type="checkbox" id="perf-graceful-shutdown"> Graceful shutdown handling (finish in-flight requests)</label> <span class="p recommended">[recommended]</span></li>
+<li><label><input type="checkbox" id="perf-load-test"> Load testing performed before launch</label> <span class="p recommended">[recommended]</span></li>
+</ul>
+</details>
+</body>
+</html>
